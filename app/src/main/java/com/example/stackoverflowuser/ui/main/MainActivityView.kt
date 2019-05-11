@@ -11,6 +11,6 @@ interface MainActivityView {
 
     fun updateUserAdapter(users: List<User>)
 
-    fun onError()
+    fun onError(throwable: Throwable)
 }
 

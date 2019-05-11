@@ -44,12 +44,12 @@ class CoroutineCallAdapterFactory private constructor() : CallAdapter.Factory() 
 
     private class BodyCallAdapter<T>(
         private val responseType: Type
-    ) : CallAdapter<T, Deferred<T?>> {
+    ) : CallAdapter<T, Deferred<T>> {
 
         override fun responseType() = responseType
 
-        override fun adapt(call: Call<T>): Deferred<T?> {
-            val deferred = CompletableDeferred<T?>()
+        override fun adapt(call: Call<T>): Deferred<T> {
+            val deferred = CompletableDeferred<T>()
 
             deferred.invokeOnCompletion {
                 if (deferred.isCancelled) {
@@ -64,9 +64,9 @@ class CoroutineCallAdapterFactory private constructor() : CallAdapter.Factory() 
 
                 override fun onResponse(call: Call<T>, response: Response<T>) {
                     if (response.isSuccessful) {
-                        deferred.complete(response.body())
+                        deferred.complete(response.body()!!)
                     } else {
-                        deferred.complete(null)
+                        deferred.completeExceptionally(HttpException(response))
                     }
                 }
             })
@@ -77,12 +77,12 @@ class CoroutineCallAdapterFactory private constructor() : CallAdapter.Factory() 
 
     private class ResponseCallAdapter<T>(
         private val responseType: Type
-    ) : CallAdapter<T, Deferred<Response<T>?>> {
+    ) : CallAdapter<T, Deferred<Response<T>>> {
 
         override fun responseType() = responseType
 
-        override fun adapt(call: Call<T>): Deferred<Response<T>?> {
-            val deferred = CompletableDeferred<Response<T>?>()
+        override fun adapt(call: Call<T>): Deferred<Response<T>> {
+            val deferred = CompletableDeferred<Response<T>>()
 
             deferred.invokeOnCompletion {
                 if (deferred.isCancelled) {
@@ -92,7 +92,7 @@ class CoroutineCallAdapterFactory private constructor() : CallAdapter.Factory() 
 
             call.enqueue(object : Callback<T> {
                 override fun onFailure(call: Call<T>, t: Throwable) {
-                    deferred.complete(null)
+                    deferred.completeExceptionally(t)
                 }
 
                 override fun onResponse(call: Call<T>, response: Response<T>) {

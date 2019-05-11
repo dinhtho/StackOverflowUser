@@ -48,8 +48,8 @@ class MainActivity : AppCompatActivity(), MainActivityView {
         progressBar.visibility = View.GONE;
     }
 
-    override fun onError() {
-        Toast.makeText(this, resources.getString(R.string.error), Toast.LENGTH_SHORT).show()
+    override fun onError(throwable: Throwable) {
+        Toast.makeText(this, throwable.message, Toast.LENGTH_SHORT).show()
     }
 
 }

@@ -8,6 +8,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.lang.Exception
 
 
 class MainActivityPresenter : BasePresenter<MainActivityView> {
@@ -33,17 +34,25 @@ class MainActivityPresenter : BasePresenter<MainActivityView> {
         mView?.showLoading()
 
         CoroutineScope(Dispatchers.IO).launch {
-            val usersResponse =
-                StackOverflowServiceBuilder().getUsers(page, Constants.PAGE_SIZE, Constants.SITE).await()
-            withContext(Dispatchers.Main) {
-                mView?.hideLoading()
-
-                if (usersResponse?.items != null && usersResponse.items is List<User>) {
-                    mView?.updateUserAdapter(usersResponse.items!!)
-                }else{
-                    mView?.onError()
+            try {
+                val usersResponse =
+                    StackOverflowServiceBuilder()
+                        .getUsers(page, Constants.PAGE_SIZE, Constants.SITE).await()
+                withContext(Dispatchers.Main) {
+                    if (usersResponse.items != null && usersResponse.items is List<User>) {
+                        mView?.updateUserAdapter(usersResponse.items!!)
+                    }
+                }
+            } catch (throwable: Throwable) {
+                withContext(Dispatchers.Main) {
+                    mView?.onError(throwable)
+                }
+            } finally {
+                withContext(Dispatchers.Main) {
+                    mView?.hideLoading()
                 }
             }
+
         }
     }
 
