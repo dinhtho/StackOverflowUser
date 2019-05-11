@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">StackoverflowUser</string>
+    <string name="reputation">Reputation</string>
+    <string name="location">Location</string>
+</resources>
