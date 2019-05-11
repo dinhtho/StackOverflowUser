@@ -5,5 +5,5 @@ package com.example.stackoverflowuser.constants
  */
 object Constants {
     const val SITE = "stackoverflow"
-    const val PAGE_SIZE = 30;
+    const val PAGE_SIZE = 30
 }

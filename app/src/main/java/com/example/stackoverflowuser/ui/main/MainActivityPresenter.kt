@@ -38,8 +38,10 @@ class MainActivityPresenter : BasePresenter<MainActivityView> {
             withContext(Dispatchers.Main) {
                 mView?.hideLoading()
 
-                if (usersResponse.items != null && usersResponse.items is List<User>) {
+                if (usersResponse?.items != null && usersResponse.items is List<User>) {
                     mView?.updateUserAdapter(usersResponse.items!!)
+                }else{
+                    mView?.onError()
                 }
             }
         }

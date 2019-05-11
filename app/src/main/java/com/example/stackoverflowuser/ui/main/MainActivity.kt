@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
+import android.widget.Toast
 import com.example.stackoverflowuser.R
 import com.example.stackoverflowuser.model.User
 import kotlinx.android.synthetic.main.activity_main.*
@@ -48,6 +49,7 @@ class MainActivity : AppCompatActivity(), MainActivityView {
     }
 
     override fun onError() {
+        Toast.makeText(this, resources.getString(R.string.error), Toast.LENGTH_SHORT).show()
     }
 
 }

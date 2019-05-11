@@ -1,12 +1,12 @@
 package com.example.stackoverflowuser.network
 
-import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
+import java.util.logging.Filter
 
 /**
  * Created by olivier.goutay on 4/28/17.
@@ -56,6 +56,7 @@ private constructor() {
 
             }
         })
+
         return builder.build()
     }
 
