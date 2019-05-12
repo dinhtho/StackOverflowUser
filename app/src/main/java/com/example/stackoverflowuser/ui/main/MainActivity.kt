@@ -7,7 +7,11 @@ import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.widget.Toast
 import com.example.stackoverflowuser.model.User
+import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_main.*
+import android.R.id
+import com.example.stackoverflowuser.constants.Constants
+import io.realm.RealmResults
 
 
 class MainActivity : AppCompatActivity(), MainActivityView {
@@ -42,10 +46,16 @@ class MainActivity : AppCompatActivity(), MainActivityView {
             movieSearchAdapter.users.addAll(users)
             movieSearchAdapter.notifyDataSetChanged()
         } else {
+            val adapter = MainActivityAdapter(users)
+            adapter.onAdapterListener = object : MainActivityAdapter.OnAdapterListener {
+                override fun onItemClick(user: User) {
+                    presenter.updateBookmark(user)
+                }
+            }
             linearLayoutManager = LinearLayoutManager(this)
             recyclerView.layoutManager = linearLayoutManager
             recyclerView.addOnScrollListener(onScrollListener)
-            recyclerView.adapter = MainActivityAdapter(users)
+            recyclerView.adapter = adapter
         }
     }
 

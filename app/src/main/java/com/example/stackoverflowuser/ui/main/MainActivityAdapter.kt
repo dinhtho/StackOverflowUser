@@ -19,7 +19,9 @@ import com.example.stackoverflowuser.model.User
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.internal.sanitize
 
-class MainActivityAdapter(var users: MutableList<User>) : RecyclerView.Adapter<MainActivityAdapter.ViewHolder>() {
+class MainActivityAdapter(var users: MutableList<User>) :
+    RecyclerView.Adapter<MainActivityAdapter.ViewHolder>() {
+    lateinit var onAdapterListener: OnAdapterListener
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_user, parent, false)
@@ -41,17 +43,18 @@ class MainActivityAdapter(var users: MutableList<User>) : RecyclerView.Adapter<M
         setUpStateBookMark(holder.ivBookMark, user)
 
         holder.rlRoot.setOnClickListener {
-            user.isBookMarked = !user.isBookMarked
+            user.isBookmarked = !user.isBookmarked
             setUpStateBookMark(holder.ivBookMark, user)
-            if (user.isBookMarked) {
+            if (user.isBookmarked) {
                 scaleAnimation(holder.ivBookMark)
             }
+            onAdapterListener?.onItemClick(user)
         }
 
     }
 
     private fun setUpStateBookMark(imageView: ImageView, user: User) {
-        if (user.isBookMarked) {
+        if (user.isBookmarked) {
             ImageViewCompat.setImageTintList(
                 imageView,
                 ColorStateList.valueOf(ContextCompat.getColor(imageView.context, R.color.yellow))
@@ -87,5 +90,7 @@ class MainActivityAdapter(var users: MutableList<User>) : RecyclerView.Adapter<M
 
     }
 
-
+    interface OnAdapterListener {
+        fun onItemClick(user: User)
+    }
 }

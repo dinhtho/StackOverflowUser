@@ -1,16 +1,18 @@
 package com.example.stackoverflowuser.model
 
+import com.example.stackoverflowuser.constants.Constants
 import com.google.gson.annotations.SerializedName
+import io.realm.RealmObject
 
 /**
  * Created by tho nguyen on 2019-05-11.
  */
-class UsersResponse : BaseModel() {
+class UsersResponse : BaseModel {
     @SerializedName("items")
     var items: MutableList<User>? = null
 }
 
-class User : BaseModel() {
+open class User : BaseModel, RealmObject() {
     @SerializedName("display_name")
     var displayName: String? = null
     @SerializedName("profile_image")
@@ -21,6 +23,8 @@ class User : BaseModel() {
     var location: String? = null
     @SerializedName("last_access_date")
     var lastAccessDate: Long? = null
+    @SerializedName("user_id")
+    var userId: String? = null
 
-    var isBookMarked = false
+    var isBookmarked = false
 }

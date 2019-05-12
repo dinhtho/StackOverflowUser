@@ -5,8 +5,10 @@ import com.example.stackoverflowuser.constants.Constants
 import com.example.stackoverflowuser.model.User
 import com.example.stackoverflowuser.model.UsersResponse
 import com.example.stackoverflowuser.services.stackoverflow_user.StackOverflowServiceBuilder
+import io.realm.Realm
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.lang.Exception
@@ -40,12 +42,21 @@ class MainActivityPresenter : BasePresenter<MainActivityView> {
                 withContext(Dispatchers.IO) {
                     usersResponse = StackOverflowServiceBuilder()
                         .getUsers(page, Constants.PAGE_SIZE, Constants.SITE).await()
+                    if (usersResponse?.items != null && usersResponse?.items is MutableList<User>) {
+                        val realm = Realm.getDefaultInstance()
+                        val users = realm.where(User::class.java).findAll()
+                        users.forEach { i ->
+                            usersResponse!!.items?.forEach { user ->
+                                if (user.userId == i.userId) {
+                                    user.isBookmarked = i.isBookmarked
+                                }
+                            }
+                        }
+                    }
                 }
 
-                if (usersResponse?.items != null && usersResponse?.items is MutableList<User>) {
-                    mView?.updateUserAdapter(usersResponse?.items!!)
+                mView?.updateUserAdapter(usersResponse?.items!!)
 
-                }
             } catch (throwable: Throwable) {
                 mView?.onError(throwable)
 
@@ -53,6 +64,18 @@ class MainActivityPresenter : BasePresenter<MainActivityView> {
                 mView?.hideLoading()
             }
 
+        }
+    }
+
+    fun updateBookmark(user: User) {
+        val realmDB = Realm.getDefaultInstance()
+        realmDB.executeTransaction { realm ->
+            if (user.isBookmarked) {
+                realm.insert(user)
+            } else {
+                val userDB = realm.where(User::class.java).equalTo("userId", user.userId).findFirst()
+                userDB?.deleteFromRealm()
+            }
         }
     }
 
