@@ -3,6 +3,7 @@ package com.example.stackoverflowuser.ui.main
 import com.example.stackoverflowuser.base.BasePresenter
 import com.example.stackoverflowuser.constants.Constants
 import com.example.stackoverflowuser.model.User
+import com.example.stackoverflowuser.model.UsersResponse
 import com.example.stackoverflowuser.services.stackoverflow_user.StackOverflowServiceBuilder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -33,24 +34,23 @@ class MainActivityPresenter : BasePresenter<MainActivityView> {
     fun getUsers(page: Int) {
         mView?.showLoading()
 
-        CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(Dispatchers.Main).launch {
+            var usersResponse: UsersResponse? = null
             try {
-                val usersResponse =
-                    StackOverflowServiceBuilder()
+                withContext(Dispatchers.IO) {
+                    usersResponse = StackOverflowServiceBuilder()
                         .getUsers(page, Constants.PAGE_SIZE, Constants.SITE).await()
-                withContext(Dispatchers.Main) {
-                    if (usersResponse.items != null && usersResponse.items is List<User>) {
-                        mView?.updateUserAdapter(usersResponse.items!!)
-                    }
+                }
+
+                if (usersResponse?.items != null && usersResponse?.items is MutableList<User>) {
+                    mView?.updateUserAdapter(usersResponse?.items!!)
+
                 }
             } catch (throwable: Throwable) {
-                withContext(Dispatchers.Main) {
-                    mView?.onError(throwable)
-                }
+                mView?.onError(throwable)
+
             } finally {
-                withContext(Dispatchers.Main) {
-                    mView?.hideLoading()
-                }
+                mView?.hideLoading()
             }
 
         }

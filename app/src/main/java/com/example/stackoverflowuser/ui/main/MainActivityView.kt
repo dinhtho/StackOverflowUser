@@ -9,7 +9,7 @@ interface MainActivityView {
 
     fun hideLoading()
 
-    fun updateUserAdapter(users: List<User>)
+    fun updateUserAdapter(users: MutableList<User>)
 
     fun onError(throwable: Throwable)
 }

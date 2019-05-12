@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName
  */
 class UsersResponse : BaseModel() {
     @SerializedName("items")
-    var items: List<User>? = null
+    var items: MutableList<User>? = null
 }
 
 class User : BaseModel() {
@@ -21,4 +21,6 @@ class User : BaseModel() {
     var location: String? = null
     @SerializedName("last_access_date")
     var lastAccessDate: Long? = null
+
+    var isBookMarked = false
 }
