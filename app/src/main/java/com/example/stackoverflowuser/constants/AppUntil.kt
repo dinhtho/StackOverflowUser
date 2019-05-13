@@ -44,14 +44,19 @@ class AppUntil {
             } else if (diff < YEAR_MILLIS && diff / MONTH_MILLIS < 12) {
                 return (diff / MONTH_MILLIS).toString() + if (isAcronym) "mo" else " months ago"
             } else {
-                val date = Date()
-                date.time = timeMillisecond
-                val simpleDateFormat = SimpleDateFormat(
-                    "MMM dd, yyyy",
-                    Locale.getDefault()
-                )
-                return simpleDateFormat.format(date)
+                return formatDate(timeMillisecond)
             }
         }
+
+        fun formatDate(timeMillisecond: Long): String {
+            val date = Date()
+            date.time = timeMillisecond
+            val simpleDateFormat = SimpleDateFormat(
+                "MMM dd, yyyy",
+                Locale.getDefault()
+            )
+            return simpleDateFormat.format(date)
+        }
+
     }
 }

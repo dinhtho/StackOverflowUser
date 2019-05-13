@@ -1,14 +1,17 @@
 package com.example.stackoverflowuser.ui.main
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.View
-import android.widget.Adapter
 import android.widget.Toast
 import com.example.stackoverflowuser.R
+import com.example.stackoverflowuser.constants.Constants
+import com.example.stackoverflowuser.model.Reputation
 import com.example.stackoverflowuser.model.User
+import com.example.stackoverflowuser.ui.reputation.ReputationActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -53,12 +56,17 @@ class MainActivity : AppCompatActivity(), MainActivityView, View.OnClickListener
 
     override fun updateUserAdapter(users: MutableList<User>) {
         if (main_recyclerView.adapter is MainActivityAdapter) {
-            val movieSearchAdapter = main_recyclerView.adapter as MainActivityAdapter
-            movieSearchAdapter.addMoreUsers(users)
+            adapter?.addMoreUsers(users)
         } else {
             adapter = MainActivityAdapter(users)
             adapter?.onAdapterListener = object : MainActivityAdapter.OnAdapterListener {
                 override fun onItemClick(user: User) {
+                    startActivity(Intent(this@MainActivity, ReputationActivity::class.java).apply {
+                        putExtra(Constants.USER_ID, user.userId)
+                    })
+                }
+
+                override fun onBookmarkClick(user: User) {
                     presenter.updateBookmark(user)
                 }
             }

@@ -47,9 +47,13 @@ class MainActivityAdapter(private var users: MutableList<User>) :
         setUpStateBookMark(holder.ivBookMark, user)
 
         holder.rlRoot.setOnClickListener {
+            onAdapterListener?.onItemClick(user)
+        }
+
+        holder.ivBookMark.setOnClickListener {
             user.isBookmarked = !user.isBookmarked
             setUpStateBookMark(holder.ivBookMark, user)
-            onAdapterListener?.onItemClick(user)
+            onAdapterListener?.onBookmarkClick(user)
             if (user.isBookmarked) {
                 scaleAnimation(holder.ivBookMark)
             }
@@ -114,6 +118,7 @@ class MainActivityAdapter(private var users: MutableList<User>) :
 
     interface OnAdapterListener {
         fun onItemClick(user: User)
+        fun onBookmarkClick(user: User)
     }
 }
 
