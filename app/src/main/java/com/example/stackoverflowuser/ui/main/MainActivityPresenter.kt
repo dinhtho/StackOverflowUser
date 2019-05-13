@@ -8,10 +8,8 @@ import com.example.stackoverflowuser.services.stackoverflow_user.StackOverflowSe
 import io.realm.Realm
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.lang.Exception
 
 
 class MainActivityPresenter : BasePresenter<MainActivityView> {
@@ -40,22 +38,22 @@ class MainActivityPresenter : BasePresenter<MainActivityView> {
             var usersResponse: UsersResponse? = null
             try {
                 withContext(Dispatchers.IO) {
-                    usersResponse = StackOverflowServiceBuilder()
+                    usersResponse = StackOverflowServiceBuilder
                         .getUsers(page, Constants.PAGE_SIZE, Constants.SITE).await()
-                    if (usersResponse?.items != null && usersResponse?.items is MutableList<User>) {
-                        val realm = Realm.getDefaultInstance()
-                        val users = realm.where(User::class.java).findAll()
-                        users.forEach { i ->
-                            usersResponse!!.items?.forEach { user ->
-                                if (user.userId == i.userId) {
-                                    user.isBookmarked = i.isBookmarked
-                                }
+                }
+                if (usersResponse?.items != null && usersResponse?.items is MutableList<User>) {
+                    val realm = Realm.getDefaultInstance()
+                    val usersDB = realm.where(User::class.java).findAll()
+                    for (i in usersDB) {
+                        for (user in usersResponse!!.items!!) {
+                            if (user.userId == i.userId) {
+                                user.isBookmarked = i.isBookmarked
+                                break
                             }
                         }
                     }
+                    mView?.updateUserAdapter(usersResponse?.items!!)
                 }
-
-                mView?.updateUserAdapter(usersResponse?.items!!)
 
             } catch (throwable: Throwable) {
                 mView?.onError(throwable)

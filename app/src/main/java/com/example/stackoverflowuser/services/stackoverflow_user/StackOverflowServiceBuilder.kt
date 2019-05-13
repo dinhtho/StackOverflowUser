@@ -8,10 +8,11 @@ import kotlinx.coroutines.Deferred
 
 class StackOverflowServiceBuilder {
 
-
-    fun getUsers(page: Int, pageSize: Int, site: String): Deferred<UsersResponse> {
-        val restStackOverflowUserService = NetworkProvider.instance
+    companion object {
+        fun getUsers(page: Int, pageSize: Int, site: String): Deferred<UsersResponse> {
+            val restStackOverflowUserService = NetworkProvider.instance
                 .provideApi(Urls.BASE_URL, RestStackOverflowService::class.java)
-        return restStackOverflowUserService.getUsers(page, pageSize, site)
+            return restStackOverflowUserService.getUsers(page, pageSize, site)
+        }
     }
 }

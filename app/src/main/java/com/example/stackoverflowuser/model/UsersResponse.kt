@@ -3,6 +3,7 @@ package com.example.stackoverflowuser.model
 import com.example.stackoverflowuser.constants.Constants
 import com.google.gson.annotations.SerializedName
 import io.realm.RealmObject
+import io.realm.annotations.PrimaryKey
 
 /**
  * Created by tho nguyen on 2019-05-11.
@@ -23,6 +24,7 @@ open class User : BaseModel, RealmObject() {
     var location: String? = null
     @SerializedName("last_access_date")
     var lastAccessDate: Long? = null
+
     @SerializedName("user_id")
     var userId: String? = null
 

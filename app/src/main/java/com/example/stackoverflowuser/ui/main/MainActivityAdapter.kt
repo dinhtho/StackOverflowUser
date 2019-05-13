@@ -21,7 +21,7 @@ import kotlinx.coroutines.internal.sanitize
 
 class MainActivityAdapter(var users: MutableList<User>) :
     RecyclerView.Adapter<MainActivityAdapter.ViewHolder>() {
-    lateinit var onAdapterListener: OnAdapterListener
+    var onAdapterListener: OnAdapterListener? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_user, parent, false)
@@ -45,10 +45,10 @@ class MainActivityAdapter(var users: MutableList<User>) :
         holder.rlRoot.setOnClickListener {
             user.isBookmarked = !user.isBookmarked
             setUpStateBookMark(holder.ivBookMark, user)
+            onAdapterListener?.onItemClick(user)
             if (user.isBookmarked) {
                 scaleAnimation(holder.ivBookMark)
             }
-            onAdapterListener?.onItemClick(user)
         }
 
     }
