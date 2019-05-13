@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.View
+import android.widget.Adapter
 import android.widget.Toast
 import com.example.stackoverflowuser.R
 import com.example.stackoverflowuser.model.User
@@ -19,6 +20,7 @@ class MainActivity : AppCompatActivity(), MainActivityView, View.OnClickListener
     private var totalItemCount = 0
     private lateinit var linearLayoutManager: LinearLayoutManager
     private var currentPage = 1
+    private var adapter: MainActivityAdapter? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,11 +54,10 @@ class MainActivity : AppCompatActivity(), MainActivityView, View.OnClickListener
     override fun updateUserAdapter(users: MutableList<User>) {
         if (main_recyclerView.adapter is MainActivityAdapter) {
             val movieSearchAdapter = main_recyclerView.adapter as MainActivityAdapter
-            movieSearchAdapter.users.addAll(users)
-            movieSearchAdapter.notifyDataSetChanged()
+            movieSearchAdapter.addMoreUsers(users)
         } else {
-            val adapter = MainActivityAdapter(users)
-            adapter.onAdapterListener = object : MainActivityAdapter.OnAdapterListener {
+            adapter = MainActivityAdapter(users)
+            adapter?.onAdapterListener = object : MainActivityAdapter.OnAdapterListener {
                 override fun onItemClick(user: User) {
                     presenter.updateBookmark(user)
                 }
@@ -90,17 +91,23 @@ class MainActivity : AppCompatActivity(), MainActivityView, View.OnClickListener
     }
 
     override fun onClick(v: View) {
-        if (v.id == main_tv_all.id) {
-            selectAll(true)
-        } else if (v.id == main_tv_bookmark.id) {
-            selectAll(false)
+        if (adapter != null) {
+            if (v.id == main_tv_all.id) {
+                selectAll(true)
+                adapter!!.back2AllUsers()
+
+            } else if (v.id == main_tv_bookmark.id) {
+                selectAll(false)
+                adapter!!.showBookmarks()
+            }
         }
+
     }
 
     private val onScrollListener = object : RecyclerView.OnScrollListener() {
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)
-            if (!isLoadingMore && dy > 0) {
+            if (!isLoadingMore && dy > 0 && !adapter!!.bookmarksShowed) {
                 visibleItemCount = linearLayoutManager.childCount
                 totalItemCount = linearLayoutManager.itemCount
                 pastVisiblesItems = linearLayoutManager.findFirstVisibleItemPosition()

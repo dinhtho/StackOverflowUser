@@ -18,9 +18,11 @@ import com.example.stackoverflowuser.custom.CircleTransform
 import com.example.stackoverflowuser.model.User
 import com.squareup.picasso.Picasso
 
-class MainActivityAdapter(var users: MutableList<User>) :
+class MainActivityAdapter(private var users: MutableList<User>) :
     RecyclerView.Adapter<MainActivityAdapter.ViewHolder>() {
     var onAdapterListener: OnAdapterListener? = null
+    private lateinit var backupList: MutableList<User>
+    var bookmarksShowed = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_user, parent, false)
@@ -55,19 +57,37 @@ class MainActivityAdapter(var users: MutableList<User>) :
 
     }
 
-    private fun setUpStateBookMark(imageView: ImageView, user: User) {
-        if (user.isBookmarked) {
-            ImageViewCompat.setImageTintList(
-                imageView,
-                ColorStateList.valueOf(ContextCompat.getColor(imageView.context, R.color.yellow))
-            )
-        } else {
-            ImageViewCompat.setImageTintList(
-                imageView,
-                ColorStateList.valueOf(ContextCompat.getColor(imageView.context, R.color.grey))
-            )
-        }
+    fun addMoreUsers(moreUsers: MutableList<User>) {
+        users.addAll(moreUsers)
+        notifyItemRangeInserted(users.size - moreUsers.size, users.size)
     }
+
+    fun showBookmarks() {
+        backupList = users.toMutableList()
+        users.retainAll { user -> user.isBookmarked }
+        notifyDataSetChanged()
+        bookmarksShowed = true
+    }
+
+    fun back2AllUsers() {
+        users = backupList
+        notifyDataSetChanged()
+        bookmarksShowed = false
+    }
+
+
+    private fun setUpStateBookMark(imageView: ImageView, user: User) {
+        ImageViewCompat.setImageTintList(
+            imageView,
+            ColorStateList.valueOf(
+                ContextCompat.getColor(
+                    imageView.context,
+                    if (user.isBookmarked) R.color.yellow else R.color.grey
+                )
+            )
+        )
+    }
+
 
     private fun scaleAnimation(view: View) {
         val animation = ScaleAnimation(
@@ -96,3 +116,4 @@ class MainActivityAdapter(var users: MutableList<User>) :
         fun onItemClick(user: User)
     }
 }
+
