@@ -77,4 +77,9 @@ class MainActivityPresenter : BasePresenter<MainActivityView> {
         }
     }
 
+    fun getBookmarks(): MutableList<User> {
+        val realm = Realm.getDefaultInstance()
+        return realm.where(User::class.java).findAll()
+    }
+
 }

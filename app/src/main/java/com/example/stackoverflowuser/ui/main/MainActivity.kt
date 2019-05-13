@@ -6,16 +6,12 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.widget.Toast
+import com.example.stackoverflowuser.R
 import com.example.stackoverflowuser.model.User
-import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_main.*
-import android.R.id
-import com.example.stackoverflowuser.constants.Constants
-import io.realm.RealmResults
 
 
-class MainActivity : AppCompatActivity(), MainActivityView {
-
+class MainActivity : AppCompatActivity(), MainActivityView, View.OnClickListener {
     private var presenter = MainActivityPresenter()
     private var isLoadingMore = false
     private var pastVisiblesItems = 0
@@ -29,9 +25,16 @@ class MainActivity : AppCompatActivity(), MainActivityView {
         super.onCreate(savedInstanceState)
         setContentView(com.example.stackoverflowuser.R.layout.activity_main)
 
-        presenter.attach(this)
-
+        init()
         presenter.getUsers(currentPage)
+    }
+
+    private fun init() {
+        presenter.attach(this)
+        main_tv_all.setOnClickListener(this)
+        main_tv_bookmark.setOnClickListener(this)
+
+        selectAll(true)
     }
 
     override fun onDestroy() {
@@ -39,10 +42,16 @@ class MainActivity : AppCompatActivity(), MainActivityView {
         super.onDestroy()
     }
 
+    private fun selectAll(isSelected: Boolean) {
+        main_tv_all.setBackgroundColor(resources.getColor(if (isSelected) R.color.red else R.color.white))
+        main_tv_all.setTextColor(resources.getColor(if (isSelected) R.color.white else R.color.red))
+        main_tv_bookmark.setBackgroundColor(resources.getColor(if (!isSelected) R.color.red else R.color.white))
+        main_tv_bookmark.setTextColor(resources.getColor(if (!isSelected) R.color.white else R.color.red))
+    }
 
     override fun updateUserAdapter(users: MutableList<User>) {
-        if (recyclerView.adapter is MainActivityAdapter) {
-            val movieSearchAdapter = recyclerView.adapter as MainActivityAdapter
+        if (main_recyclerView.adapter is MainActivityAdapter) {
+            val movieSearchAdapter = main_recyclerView.adapter as MainActivityAdapter
             movieSearchAdapter.users.addAll(users)
             movieSearchAdapter.notifyDataSetChanged()
         } else {
@@ -53,31 +62,39 @@ class MainActivity : AppCompatActivity(), MainActivityView {
                 }
             }
             linearLayoutManager = LinearLayoutManager(this)
-            recyclerView.layoutManager = linearLayoutManager
-            recyclerView.addOnScrollListener(onScrollListener)
-            recyclerView.adapter = adapter
+            main_recyclerView.layoutManager = linearLayoutManager
+            main_recyclerView.addOnScrollListener(onScrollListener)
+            main_recyclerView.adapter = adapter
         }
     }
 
     override fun showLoading() {
         if (isLoadingMore) {
-            progressBar_bottom.visibility = View.VISIBLE
+            main_progressBar_bottom.visibility = View.VISIBLE
         } else {
-            progressBar.visibility = View.VISIBLE;
+            main_progressBar.visibility = View.VISIBLE;
         }
     }
 
     override fun hideLoading() {
         if (isLoadingMore) {
-            progressBar_bottom.visibility = View.GONE
+            main_progressBar_bottom.visibility = View.GONE
             isLoadingMore = false
         } else {
-            progressBar.visibility = View.GONE
+            main_progressBar.visibility = View.GONE
         }
     }
 
     override fun onError(throwable: Throwable) {
         Toast.makeText(this, throwable.message, Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onClick(v: View) {
+        if (v.id == main_tv_all.id) {
+            selectAll(true)
+        } else if (v.id == main_tv_bookmark.id) {
+            selectAll(false)
+        }
     }
 
     private val onScrollListener = object : RecyclerView.OnScrollListener() {
@@ -88,7 +105,7 @@ class MainActivity : AppCompatActivity(), MainActivityView {
                 totalItemCount = linearLayoutManager.itemCount
                 pastVisiblesItems = linearLayoutManager.findFirstVisibleItemPosition()
 
-                if ((visibleItemCount + pastVisiblesItems) >= totalItemCount - 10) {
+                if ((visibleItemCount + pastVisiblesItems) >= totalItemCount - 5) {
                     isLoadingMore = true
                     presenter.getUsers(currentPage++)
                 }

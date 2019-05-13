@@ -1,10 +1,8 @@
 package com.example.stackoverflowuser.services.stackoverflow_user
 
-import com.example.stackoverflowuser.constants.Urls
 import com.example.stackoverflowuser.model.UsersResponse
 import kotlinx.coroutines.Deferred
 import retrofit2.http.GET
-import retrofit2.http.Path
 import retrofit2.http.Query
 
 /**

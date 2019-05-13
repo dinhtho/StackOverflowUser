@@ -1,7 +1,6 @@
 package com.example.stackoverflowuser.ui.main
 
 import android.content.res.ColorStateList
-import android.graphics.PorterDuff
 import android.support.v4.content.ContextCompat
 import android.support.v4.widget.ImageViewCompat
 import android.support.v7.widget.RecyclerView
@@ -13,11 +12,11 @@ import android.view.animation.ScaleAnimation
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
-import com.example.stackoverflowuser.custom.CircleTransform
 import com.example.stackoverflowuser.R
+import com.example.stackoverflowuser.constants.AppUntil
+import com.example.stackoverflowuser.custom.CircleTransform
 import com.example.stackoverflowuser.model.User
 import com.squareup.picasso.Picasso
-import kotlinx.coroutines.internal.sanitize
 
 class MainActivityAdapter(var users: MutableList<User>) :
     RecyclerView.Adapter<MainActivityAdapter.ViewHolder>() {
@@ -39,7 +38,10 @@ class MainActivityAdapter(var users: MutableList<User>) :
         holder.tvName.text = user.displayName
         holder.tvReputation.text = user.reputation.toString()
         holder.tvLocation.text = user.location
-        holder.tvLastAccessDate.text = user.lastAccessDate.toString()
+        if (user.lastAccessDate != null) {
+            holder.tvLastAccessDate.text =
+                AppUntil.getRelativeDateTime(user.lastAccessDate!! * AppUntil.SECOND_MILLIS, false)
+        }
         setUpStateBookMark(holder.ivBookMark, user)
 
         holder.rlRoot.setOnClickListener {
