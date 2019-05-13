@@ -18,33 +18,20 @@ class AppUntil {
         private val YEAR_MILLIS = 365 * DAY_MILLIS
 
         fun getRelativeDateTime(timeMillisecond: Long, isAcronym: Boolean): String {
-
             val diff = System.currentTimeMillis() - timeMillisecond
-
-            if (diff < MINUTE_MILLIS) {
-                return if (isAcronym) (diff / 1000).toString() + "s" else "Just now"
-            } else if (diff < 2 * MINUTE_MILLIS) {
-                return if (isAcronym) "1m" else "1 minute ago"
-            } else if (diff < 50 * MINUTE_MILLIS) {
-                return (diff / MINUTE_MILLIS).toString() + if (isAcronym) "m" else " minutes ago"
-            } else if (diff < 120 * MINUTE_MILLIS) {
-                return if (isAcronym) "1h" else "1 hour ago"
-            } else if (diff < 24 * HOUR_MILLIS) {
-                return (diff / HOUR_MILLIS).toString() + if (isAcronym) "h" else " hours ago"
-            } else if (diff < 48 * HOUR_MILLIS) {
-                return if (isAcronym) "1d" else "Yesterday"
-            } else if (diff < WEEK_MILLIS) {
-                return (diff / DAY_MILLIS).toString() + if (isAcronym) "d" else " days ago"
-            } else if (diff < 2 * WEEK_MILLIS) {
-                return if (isAcronym) "1w" else "Last week"
-            } else if (diff < MONTH_MILLIS) {
-                return (diff / WEEK_MILLIS).toString() + if (isAcronym) "w" else " weeks ago"
-            } else if (diff < 2 * MONTH_MILLIS) {
-                return if (isAcronym) "1mo" else "Last month"
-            } else if (diff < YEAR_MILLIS && diff / MONTH_MILLIS < 12) {
-                return (diff / MONTH_MILLIS).toString() + if (isAcronym) "mo" else " months ago"
-            } else {
-                return formatDate(timeMillisecond)
+            return when {
+                diff < MINUTE_MILLIS -> if (isAcronym) (diff / 1000).toString() + "s" else "Just now"
+                diff < 2 * MINUTE_MILLIS -> if (isAcronym) "1m" else "1 minute ago"
+                diff < 50 * MINUTE_MILLIS -> (diff / MINUTE_MILLIS).toString() + if (isAcronym) "m" else " minutes ago"
+                diff < 120 * MINUTE_MILLIS -> if (isAcronym) "1h" else "1 hour ago"
+                diff < 24 * HOUR_MILLIS -> (diff / HOUR_MILLIS).toString() + if (isAcronym) "h" else " hours ago"
+                diff < 48 * HOUR_MILLIS -> if (isAcronym) "1d" else "Yesterday"
+                diff < WEEK_MILLIS -> (diff / DAY_MILLIS).toString() + if (isAcronym) "d" else " days ago"
+                diff < 2 * WEEK_MILLIS -> if (isAcronym) "1w" else "Last week"
+                diff < MONTH_MILLIS -> (diff / WEEK_MILLIS).toString() + if (isAcronym) "w" else " weeks ago"
+                diff < 2 * MONTH_MILLIS -> if (isAcronym) "1mo" else "Last month"
+                diff < YEAR_MILLIS && diff / MONTH_MILLIS < 12 -> (diff / MONTH_MILLIS).toString() + if (isAcronym) "mo" else " months ago"
+                else -> formatDate(timeMillisecond)
             }
         }
 
@@ -52,8 +39,8 @@ class AppUntil {
             val date = Date()
             date.time = timeMillisecond
             val simpleDateFormat = SimpleDateFormat(
-                "MMM dd, yyyy",
-                Locale.getDefault()
+                    "MMM dd, yyyy",
+                    Locale.getDefault()
             )
             return simpleDateFormat.format(date)
         }
