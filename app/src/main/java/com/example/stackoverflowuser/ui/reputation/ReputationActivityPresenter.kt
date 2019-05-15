@@ -5,6 +5,7 @@ import com.example.stackoverflowuser.constants.Constants
 import com.example.stackoverflowuser.model.Reputation
 import com.example.stackoverflowuser.model.ReputationsResponse
 import com.example.stackoverflowuser.model.User
+import com.example.stackoverflowuser.network.Network
 import com.example.stackoverflowuser.services.stackoverflow_user.StackOverflowServiceBuilder
 import io.realm.Realm
 import kotlinx.coroutines.CoroutineScope
@@ -27,26 +28,17 @@ class ReputationActivityPresenter : BasePresenter<ReputationActivityView> {
 
 
     fun getUserReputations(userId: String, page: Int) {
-        mView?.showLoading()
-
-        CoroutineScope(Dispatchers.Main).launch {
-            var reputationsResponse: ReputationsResponse? = null
-            try {
-                withContext(Dispatchers.IO) {
-                    reputationsResponse = StackOverflowServiceBuilder
-                        .getUserReputations(userId,page, Constants.PAGE_SIZE, Constants.SITE).await()
+        Network.request(
+            doOnSubscribe = { mView?.showLoading() },
+            doOnTerminate = { mView?.hideLoading() },
+            error = { throwable -> mView?.onError(throwable) },
+            call = StackOverflowServiceBuilder
+                .getUserReputations(userId, page, Constants.PAGE_SIZE, Constants.SITE),
+            success = { reputationsResponse ->
+                if (reputationsResponse?.items != null && reputationsResponse.items is MutableList<Reputation>) {
+                    mView?.updateReputationAdapter(reputationsResponse.items!!)
                 }
-                if (reputationsResponse?.items != null && reputationsResponse?.items is MutableList<Reputation>) {
-                    mView?.updateReputationAdapter(reputationsResponse?.items!!)
-                }
-
-            } catch (throwable: Throwable) {
-                mView?.onError(throwable)
-
-            } finally {
-                mView?.hideLoading()
             }
-
-        }
+        )
     }
 }

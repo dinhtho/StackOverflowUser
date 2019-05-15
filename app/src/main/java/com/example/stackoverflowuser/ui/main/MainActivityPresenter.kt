@@ -4,6 +4,7 @@ import com.example.stackoverflowuser.base.BasePresenter
 import com.example.stackoverflowuser.constants.Constants
 import com.example.stackoverflowuser.model.User
 import com.example.stackoverflowuser.model.UsersResponse
+import com.example.stackoverflowuser.network.Network
 import com.example.stackoverflowuser.services.stackoverflow_user.StackOverflowServiceBuilder
 import io.realm.Realm
 import kotlinx.coroutines.CoroutineScope
@@ -32,37 +33,28 @@ class MainActivityPresenter : BasePresenter<MainActivityView> {
 
 
     fun getUsers(page: Int) {
-        mView?.showLoading()
-
-        CoroutineScope(Dispatchers.Main).launch {
-            var usersResponse: UsersResponse? = null
-            try {
-                withContext(Dispatchers.IO) {
-                    usersResponse = StackOverflowServiceBuilder
-                        .getUsers(page, Constants.PAGE_SIZE, Constants.SITE).await()
-                }
-                if (usersResponse?.items != null && usersResponse?.items is MutableList<User>) {
+        Network.request(
+            call = StackOverflowServiceBuilder
+                .getUsers(page, Constants.PAGE_SIZE, Constants.SITE),
+            success = { usersResponse ->
+                if (usersResponse?.items != null && usersResponse.items is MutableList<User>) {
                     val realm = Realm.getDefaultInstance()
                     val usersDB = realm.where(User::class.java).findAll()
                     for (i in usersDB) {
-                        for (user in usersResponse!!.items!!) {
+                        for (user in usersResponse.items!!) {
                             if (user.userId == i.userId) {
                                 user.isBookmarked = i.isBookmarked
                                 break
                             }
                         }
                     }
-                    mView?.updateUserAdapter(usersResponse?.items!!)
+                    mView?.updateUserAdapter(usersResponse.items!!)
                 }
-
-            } catch (throwable: Throwable) {
-                mView?.onError(throwable)
-
-            } finally {
-                mView?.hideLoading()
-            }
-
-        }
+            },
+            doOnTerminate = { mView?.hideLoading() },
+            doOnSubscribe = { mView?.showLoading() },
+            error = { throwable -> mView?.onError(throwable) }
+        )
     }
 
     fun updateBookmark(user: User) {
