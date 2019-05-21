@@ -1,6 +1,7 @@
 package com.example.stackoverflowuser.ui.main
 
 import android.content.res.ColorStateList
+import android.support.constraint.ConstraintLayout
 import android.support.v4.content.ContextCompat
 import android.support.v4.widget.ImageViewCompat
 import android.support.v7.widget.RecyclerView
@@ -46,7 +47,7 @@ class MainActivityAdapter(private var users: MutableList<User>) :
         }
         setUpStateBookMark(holder.ivBookMark, user)
 
-        holder.rlRoot.setOnClickListener {
+        holder.clRoot.setOnClickListener {
             onAdapterListener?.onItemClick(user)
         }
 
@@ -112,7 +113,7 @@ class MainActivityAdapter(private var users: MutableList<User>) :
         val tvReputation = itemView.findViewById(R.id.item_user_tv_reputation) as TextView
         val tvLocation = itemView.findViewById(R.id.item_user_tv_location) as TextView
         val tvLastAccessDate = itemView.findViewById(R.id.item_user_tv_last_access_date) as TextView
-        val rlRoot = itemView.findViewById(R.id.item_user_rl_root) as RelativeLayout
+        val clRoot = itemView.findViewById(R.id.item_user_cl_root) as ConstraintLayout
 
     }
 
