@@ -1,9 +1,9 @@
 package com.example.stackoverflowuser.ui.reputation
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import android.view.View
 import android.widget.Toast
 import com.example.stackoverflowuser.R
@@ -20,7 +20,7 @@ class ReputationActivity : AppCompatActivity(), ReputationActivityView {
     private var pastVisiblesItems = 0
     private var visibleItemCount = 0
     private var totalItemCount = 0
-    private lateinit var linearLayoutManager: LinearLayoutManager
+    private lateinit var linearLayoutManager: androidx.recyclerview.widget.LinearLayoutManager
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,15 +62,15 @@ class ReputationActivity : AppCompatActivity(), ReputationActivityView {
             adapter.addMoreReputation(reputations)
         } else {
             val adapter = ReputationActivityAdapter(reputations)
-            linearLayoutManager = LinearLayoutManager(this)
+            linearLayoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
             reputation_recyclerView.layoutManager = linearLayoutManager
             reputation_recyclerView.adapter = adapter
             reputation_recyclerView.addOnScrollListener(onScrollListener)
         }
     }
 
-    private val onScrollListener = object : RecyclerView.OnScrollListener() {
-        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+    private val onScrollListener = object : androidx.recyclerview.widget.RecyclerView.OnScrollListener() {
+        override fun onScrolled(recyclerView: androidx.recyclerview.widget.RecyclerView, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)
             if (!isLoadingMore && dy > 0) {
                 visibleItemCount = linearLayoutManager.childCount

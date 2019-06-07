@@ -1,10 +1,10 @@
 package com.example.stackoverflowuser.ui.main
 
 import android.content.res.ColorStateList
-import android.support.constraint.ConstraintLayout
-import android.support.v4.content.ContextCompat
-import android.support.v4.widget.ImageViewCompat
-import android.support.v7.widget.RecyclerView
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
+import androidx.core.widget.ImageViewCompat
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,7 +20,7 @@ import com.example.stackoverflowuser.model.User
 import com.squareup.picasso.Picasso
 
 class MainActivityAdapter(private var users: MutableList<User>) :
-    RecyclerView.Adapter<MainActivityAdapter.ViewHolder>() {
+    androidx.recyclerview.widget.RecyclerView.Adapter<MainActivityAdapter.ViewHolder>() {
     var onAdapterListener: OnAdapterListener? = null
     private lateinit var backupList: MutableList<User>
     var bookmarksShowed = false
@@ -106,7 +106,7 @@ class MainActivityAdapter(private var users: MutableList<User>) :
         view.startAnimation(animation)
     }
 
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class ViewHolder(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView) {
         val ivAvatar = itemView.findViewById(R.id.item_user_iv_avatar) as ImageView
         val ivBookMark = itemView.findViewById(R.id.item_user_iv_bookmark) as ImageView
         val tvName = itemView.findViewById(R.id.item_user_tv_name) as TextView

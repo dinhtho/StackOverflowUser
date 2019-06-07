@@ -1,36 +1,23 @@
 package com.example.stackoverflowuser.ui.main
 
-import com.example.stackoverflowuser.base.BasePresenter
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import com.example.stackoverflowuser.constants.Constants
 import com.example.stackoverflowuser.model.User
-import com.example.stackoverflowuser.model.UsersResponse
 import com.example.stackoverflowuser.network.Network
 import com.example.stackoverflowuser.services.stackoverflow_user.StackOverflowServiceBuilder
 import io.realm.Realm
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
+/**
+ * Created by tho nguyen on 2019-06-07.
+ */
 
-class MainActivityPresenter : BasePresenter<MainActivityView> {
+class MainActivityViewModel : ViewModel() {
 
-    val TAG = "MainActivityPresenter"
-
-    /**
-     * The reference to [MainActivityView]
-     * Created in [.attach] and destroyed in [.detach]
-     */
-    var mView: MainActivityView? = null
-
-    override fun attach(view: MainActivityView) {
-        this.mView = view
-    }
-
-    override fun detach() {
-        this.mView = null
-    }
-
+    val users = MutableLiveData<MutableList<User>>()
+    val loading = MutableLiveData<Boolean>()
+    val error = MutableLiveData<Throwable>();
 
     fun getUsers(page: Int) {
         Network.request(
@@ -48,12 +35,12 @@ class MainActivityPresenter : BasePresenter<MainActivityView> {
                             }
                         }
                     }
-                    mView?.updateUserAdapter(usersResponse.items!!)
+                    users.value = usersResponse.items
                 }
             },
-            doOnTerminate = { mView?.hideLoading() },
-            doOnSubscribe = { mView?.showLoading() },
-            error = { throwable -> mView?.onError(throwable) }
+            doOnTerminate = { loading.value = false },
+            doOnSubscribe = { loading.value = true },
+            error = { throwable -> error.value = throwable }
         )
     }
 

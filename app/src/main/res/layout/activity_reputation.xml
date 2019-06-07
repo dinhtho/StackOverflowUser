@@ -5,7 +5,7 @@
                 android:layout_height="match_parent"
                 tools:context=".ui.main.MainActivity">
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
             android:layout_above="@+id/reputation_progressBar_bottom"
             android:id="@+id/reputation_recyclerView"
             android:layout_width="match_parent"

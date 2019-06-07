@@ -1,6 +1,6 @@
 package com.example.stackoverflowuser.ui.reputation
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +10,7 @@ import com.example.stackoverflowuser.constants.AppUntil
 import com.example.stackoverflowuser.model.Reputation
 
 class ReputationActivityAdapter(private var reputations: MutableList<Reputation>) :
-    RecyclerView.Adapter<ReputationActivityAdapter.ViewHolder>() {
+    androidx.recyclerview.widget.RecyclerView.Adapter<ReputationActivityAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_reputation, parent, false)
@@ -37,7 +37,7 @@ class ReputationActivityAdapter(private var reputations: MutableList<Reputation>
         notifyItemRangeInserted(reputations.size - moreReputations.size, reputations.size)
     }
 
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class ViewHolder(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView) {
         val tvReputation = itemView.findViewById(R.id.item_reputation_tv_reputation) as TextView
         val tvCreated = itemView.findViewById(R.id.item_reputation_tv_created) as TextView
         val tvChange = itemView.findViewById(R.id.item_reputation_tv_change) as TextView
