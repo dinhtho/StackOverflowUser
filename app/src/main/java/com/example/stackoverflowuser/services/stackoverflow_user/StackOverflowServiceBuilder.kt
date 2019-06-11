@@ -5,21 +5,23 @@ import com.example.stackoverflowuser.model.ReputationsResponse
 import com.example.stackoverflowuser.model.UsersResponse
 import com.example.stackoverflowuser.network.NetworkProvider
 import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.runBlocking
 
 
 class StackOverflowServiceBuilder {
 
     companion object {
-        fun getUsers(page: Int, pageSize: Int, site: String): Deferred<UsersResponse> {
+        fun getUsers(page: Int, pageSize: Int, site: String) = suspend {
             val restStackOverflowUserService = NetworkProvider.instance
                 .provideApi(Urls.BASE_URL, RestStackOverflowService::class.java)
-            return restStackOverflowUserService.getUsers(page, pageSize, site)
+            restStackOverflowUserService.getUsers(page, pageSize, site)
         }
 
-        fun getUserReputations(userId: String, page: Int, pageSize: Int, site: String): Deferred<ReputationsResponse> {
+
+        fun getUserReputations(userId: String, page: Int, pageSize: Int, site: String) = suspend {
             val restStackOverflowUserService = NetworkProvider.instance
                 .provideApi(Urls.BASE_URL, RestStackOverflowService::class.java)
-            return restStackOverflowUserService.getUserReputations(userId, page, pageSize, site)
+            restStackOverflowUserService.getUserReputations(userId, page, pageSize, site)
         }
     }
 }

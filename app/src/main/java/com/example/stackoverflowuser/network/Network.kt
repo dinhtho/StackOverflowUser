@@ -7,7 +7,7 @@ import kotlinx.coroutines.*
  */
 object Network {
     fun <T> request(
-        call: Deferred<T>,
+        call:  suspend () -> T,
         success: ((response: T?) -> Unit)?,
         error: ((throwable: Throwable) -> Unit)? = null,
         doOnSubscribe: (() -> Unit)? = null,
@@ -16,7 +16,7 @@ object Network {
         CoroutineScope(Dispatchers.Main).launch {
             doOnSubscribe?.invoke()
             try {
-                success?.invoke(call.await())
+                success?.invoke(call.invoke())
             } catch (t: Throwable) {
                 error?.invoke(t)
             } finally {

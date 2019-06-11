@@ -65,7 +65,6 @@ private constructor() {
 
     fun <T> provideApi(baseUrl: String, apiClass: Class<T>, okHttpClient: OkHttpClient): T {
         val retrofit = Retrofit.Builder()
-            .addCallAdapterFactory(CoroutineCallAdapterFactory())
             .addConverterFactory(GsonConverterFactory.create())
             .client(okHttpClient)
             .baseUrl(baseUrl)

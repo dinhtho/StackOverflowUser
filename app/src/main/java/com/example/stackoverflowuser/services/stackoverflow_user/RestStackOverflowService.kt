@@ -12,17 +12,17 @@ import retrofit2.http.Query
  */
 interface RestStackOverflowService {
     @GET("users")
-    fun getUsers(
+    suspend fun getUsers(
         @Query("page") page: Int,
         @Query("pagesize") pageSize: Int,
         @Query("site") site: String
-    ): Deferred<UsersResponse>
+    ): UsersResponse
 
     @GET("users/{userId}/reputation-history")
-    fun getUserReputations(
+    suspend fun getUserReputations(
         @Path("userId") userId: String,
         @Query("page") page: Int,
         @Query("pagesize") pageSize: Int,
         @Query("site") site: String
-    ): Deferred<ReputationsResponse>
+    ): ReputationsResponse
 }
