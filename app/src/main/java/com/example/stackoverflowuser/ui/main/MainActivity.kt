@@ -2,20 +2,22 @@ package com.example.stackoverflowuser.ui.main
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.os.Message
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import com.example.stackoverflowuser.R
 import com.example.stackoverflowuser.constants.Constants
-import com.example.stackoverflowuser.model.Reputation
 import com.example.stackoverflowuser.model.User
 import com.example.stackoverflowuser.ui.reputation.ReputationActivity
 import kotlinx.android.synthetic.main.activity_main.*
+import java.util.concurrent.Callable
 
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {
@@ -42,6 +44,32 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         setupShowingError()
 
         viewModel.getUsers(currentPage)
+
+        testHandler()
+
+    }
+
+    private val TAG = "MainActivity"
+    fun testHandler() {
+        val uiHandler = Handler { msg: Message? ->
+            Log.d(TAG, "testHandler0: from " + msg?.obj)
+            Log.d(TAG, "testHandler0: to " + Looper.myLooper()?.thread?.name)
+            true
+        }
+        val myThread = MyThread(uiHandler)
+        myThread.start()
+
+        while (myThread.looper == null) {
+
+        }
+        val bgHandler = Handler(myThread.looper) { msg ->
+            Log.d(TAG, "testHandler1: from " + msg.obj)
+            Log.d(TAG, "testHandler1: to " + Looper.myLooper()?.thread?.name)
+            true
+        }
+        val message = Message.obtain()
+        message.obj = Looper.myLooper()?.thread?.name
+        bgHandler.sendMessage(message)
 
     }
 
@@ -141,4 +169,18 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
+}
+
+class MyThread(private var uiHandler: Handler) : Thread() {
+
+    var looper: Looper? = null
+    override fun run() {
+        val message = Message.obtain()
+        message.obj = "worker thread"
+        uiHandler.sendMessage(message)
+
+        Looper.prepare()
+        looper = Looper.myLooper()
+        Looper.loop()
+    }
 }
