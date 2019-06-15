@@ -3,6 +3,7 @@ package com.example.stackoverflowuser.ui.main
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.stackoverflowuser.constants.Constants
 import com.example.stackoverflowuser.model.User
 import com.example.stackoverflowuser.network.Network
@@ -21,6 +22,7 @@ class MainActivityViewModel : ViewModel() {
 
     fun getUsers(page: Int) {
         Network.request(
+            scope = viewModelScope,
             call = StackOverflowServiceBuilder
                 .getUsers(page, Constants.PAGE_SIZE, Constants.SITE),
             success = { usersResponse ->

@@ -7,13 +7,14 @@ import kotlinx.coroutines.*
  */
 object Network {
     fun <T> request(
-        call:  suspend () -> T,
+        scope: CoroutineScope = CoroutineScope(Dispatchers.Main),
+        call: suspend () -> T,
         success: ((response: T?) -> Unit)?,
         error: ((throwable: Throwable) -> Unit)? = null,
         doOnSubscribe: (() -> Unit)? = null,
         doOnTerminate: (() -> Unit)? = null
     ) {
-        CoroutineScope(Dispatchers.Main).launch {
+        scope.launch {
             doOnSubscribe?.invoke()
             try {
                 success?.invoke(call.invoke())
