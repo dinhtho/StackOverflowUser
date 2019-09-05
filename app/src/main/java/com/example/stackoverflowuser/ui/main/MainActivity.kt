@@ -45,32 +45,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
         viewModel.getUsers(currentPage)
 
-        testHandler()
-
-    }
-
-    private val TAG = "MainActivity"
-    fun testHandler() {
-        val uiHandler = Handler { msg: Message? ->
-            Log.d(TAG, "testHandler0: from " + msg?.obj)
-            Log.d(TAG, "testHandler0: to " + Looper.myLooper()?.thread?.name)
-            true
-        }
-        val myThread = MyThread(uiHandler)
-        myThread.start()
-
-        while (myThread.looper == null) {
-
-        }
-        val bgHandler = Handler(myThread.looper) { msg ->
-            Log.d(TAG, "testHandler1: from " + msg.obj)
-            Log.d(TAG, "testHandler1: to " + Looper.myLooper()?.thread?.name)
-            true
-        }
-        val message = Message.obtain()
-        message.obj = Looper.myLooper()?.thread?.name
-        bgHandler.sendMessage(message)
-
     }
 
     private fun setupRecycleView() {
@@ -79,9 +53,13 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 adapter = MainActivityAdapter(users)
                 adapter?.onAdapterListener = object : MainActivityAdapter.OnAdapterListener {
                     override fun onItemClick(user: User) {
-                        startActivity(Intent(this@MainActivity, ReputationActivity::class.java).apply {
-                            putExtra(Constants.USER_ID, user.userId)
-                        })
+                        startActivity(
+                            Intent(
+                                this@MainActivity,
+                                ReputationActivity::class.java
+                            ).apply {
+                                putExtra(Constants.USER_ID, user.userId)
+                            })
                     }
 
                     override fun onBookmarkClick(user: User) {
@@ -127,7 +105,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         main_tv_all.setOnClickListener(this)
         main_tv_bookmark.setOnClickListener(this)
         selectAll(true)
-        viewModel = ViewModelProviders.of(this).get<MainActivityViewModel>(MainActivityViewModel::class.java)
+        viewModel = ViewModelProviders.of(this)
+            .get<MainActivityViewModel>(MainActivityViewModel::class.java)
 
     }
 
@@ -152,35 +131,26 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     }
 
-    private val onScrollListener = object : androidx.recyclerview.widget.RecyclerView.OnScrollListener() {
-        override fun onScrolled(recyclerView: androidx.recyclerview.widget.RecyclerView, dx: Int, dy: Int) {
-            super.onScrolled(recyclerView, dx, dy)
-            if (!isLoadingMore && dy > 0 && !adapter!!.bookmarksShowed) {
-                visibleItemCount = linearLayoutManager.childCount
-                totalItemCount = linearLayoutManager.itemCount
-                pastVisiblesItems = linearLayoutManager.findFirstVisibleItemPosition()
+    private val onScrollListener =
+        object : androidx.recyclerview.widget.RecyclerView.OnScrollListener() {
+            override fun onScrolled(
+                recyclerView: androidx.recyclerview.widget.RecyclerView,
+                dx: Int,
+                dy: Int
+            ) {
+                super.onScrolled(recyclerView, dx, dy)
+                if (!isLoadingMore && dy > 0 && !adapter!!.bookmarksShowed) {
+                    visibleItemCount = linearLayoutManager.childCount
+                    totalItemCount = linearLayoutManager.itemCount
+                    pastVisiblesItems = linearLayoutManager.findFirstVisibleItemPosition()
 
-                if ((visibleItemCount + pastVisiblesItems) >= totalItemCount - 5) {
-                    isLoadingMore = true
-                    viewModel.getUsers(currentPage++)
+                    if ((visibleItemCount + pastVisiblesItems) >= totalItemCount - 5) {
+                        isLoadingMore = true
+                        viewModel.getUsers(currentPage++)
+                    }
+
                 }
-
             }
         }
-    }
 
-}
-
-class MyThread(private var uiHandler: Handler) : Thread() {
-
-    var looper: Looper? = null
-    override fun run() {
-        val message = Message.obtain()
-        message.obj = "worker thread"
-        uiHandler.sendMessage(message)
-
-        Looper.prepare()
-        looper = Looper.myLooper()
-        Looper.loop()
-    }
 }

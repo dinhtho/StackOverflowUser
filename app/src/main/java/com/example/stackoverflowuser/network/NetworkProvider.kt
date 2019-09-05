@@ -3,6 +3,7 @@ package com.example.stackoverflowuser.network
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Response
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
@@ -46,11 +47,14 @@ private constructor() {
         builder.connectTimeout(timeOut.toLong(), TimeUnit.SECONDS)
         builder.readTimeout(timeOut.toLong(), TimeUnit.SECONDS)
         builder.writeTimeout(timeOut.toLong(), TimeUnit.SECONDS)
+
+        val interceptor = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.HEADERS)
+        builder.addInterceptor(interceptor)
         builder.addInterceptor(object : Interceptor {
             override fun intercept(chain: Interceptor.Chain?): Response {
                 val request = chain?.request()?.newBuilder()
-                        ?.addHeader("Content-Type", "application/json")
-                        ?.build()
+                    ?.addHeader("Content-Type", "application/json")
+                    ?.build()
                 return chain!!.proceed(request!!);
 
             }
