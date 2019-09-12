@@ -41,6 +41,10 @@ private constructor() {
             }
     }
 
+    val defaultOkHttpClient by lazy {
+        provideDefaultOkHttpClient()
+    }
+
     private fun provideDefaultOkHttpClient(): OkHttpClient {
         val builder = OkHttpClient.Builder()
         val timeOut = 120
@@ -50,29 +54,24 @@ private constructor() {
 
         val interceptor = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.HEADERS)
         builder.addInterceptor(interceptor)
-        builder.addInterceptor(object : Interceptor {
-            override fun intercept(chain: Interceptor.Chain?): Response {
-                val request = chain?.request()?.newBuilder()
-                    ?.addHeader("Content-Type", "application/json")
-                    ?.build()
-                return chain!!.proceed(request!!);
-
-            }
-        })
+        builder.addInterceptor { chain ->
+            val request =
+                chain.request().newBuilder().addHeader("Content-Type", "application/json").build()
+            chain.proceed(request)
+        }
 
         return builder.build()
     }
 
-    fun <T> provideApi(baseUrl: String, apiClass: Class<T>): T {
-        return provideApi(baseUrl, apiClass, provideDefaultOkHttpClient())
-    }
-
-    fun <T> provideApi(baseUrl: String, apiClass: Class<T>, okHttpClient: OkHttpClient): T {
+    inline fun <reified T> provideApi(
+        baseUrl: String,
+        okHttpClient: OkHttpClient = defaultOkHttpClient
+    ): T {
         val retrofit = Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
             .client(okHttpClient)
             .baseUrl(baseUrl)
             .build()
-        return retrofit.create(apiClass)
+        return retrofit.create(T::class.java)
     }
 }
