@@ -7,8 +7,10 @@ import androidx.recyclerview.widget.RecyclerView
 import android.view.View
 import android.widget.Toast
 import com.example.stackoverflowuser.R
+import com.example.stackoverflowuser.application.MyApplication
 import com.example.stackoverflowuser.constants.Constants
 import com.example.stackoverflowuser.model.Reputation
+import com.google.android.gms.analytics.HitBuilders
 import kotlinx.android.synthetic.main.activity_reputation.*
 
 
@@ -33,6 +35,15 @@ class ReputationActivity : AppCompatActivity(), ReputationActivityView {
 
         presenter.attach(this)
         presenter.getUserReputations(userId, currentPage)
+
+        sendTracker(this.javaClass.name)
+    }
+
+    private fun sendTracker(screenName: String) {
+        val application = application as MyApplication
+        val mTracker = application.getDefaultTracker()
+        mTracker.setScreenName(screenName)
+        mTracker.send(HitBuilders.ScreenViewBuilder().build())
     }
 
     override fun showLoading() {

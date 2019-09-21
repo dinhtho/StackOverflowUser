@@ -2,10 +2,6 @@ package com.example.stackoverflowuser.ui.main
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.os.Message
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.View
@@ -17,7 +13,10 @@ import com.example.stackoverflowuser.constants.Constants
 import com.example.stackoverflowuser.model.User
 import com.example.stackoverflowuser.ui.reputation.ReputationActivity
 import kotlinx.android.synthetic.main.activity_main.*
-import java.util.concurrent.Callable
+
+
+import com.example.stackoverflowuser.application.MyApplication
+import com.google.android.gms.analytics.HitBuilders
 
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {
@@ -44,6 +43,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         setupShowingError()
 
         viewModel.getUsers(currentPage)
+
+        sendTracker(this.javaClass.name)
 
     }
 
@@ -111,10 +112,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun selectAll(isSelected: Boolean) {
-        main_tv_all.setBackgroundColor(resources.getColor(if (isSelected) R.color.red else R.color.white))
-        main_tv_all.setTextColor(resources.getColor(if (isSelected) R.color.white else R.color.red))
-        main_tv_bookmark.setBackgroundColor(resources.getColor(if (!isSelected) R.color.red else R.color.white))
-        main_tv_bookmark.setTextColor(resources.getColor(if (!isSelected) R.color.white else R.color.red))
+        main_tv_all.setBackgroundColor(resources.getColor(if (isSelected) com.example.stackoverflowuser.R.color.red else com.example.stackoverflowuser.R.color.white))
+        main_tv_all.setTextColor(resources.getColor(if (isSelected) com.example.stackoverflowuser.R.color.white else com.example.stackoverflowuser.R.color.red))
+        main_tv_bookmark.setBackgroundColor(resources.getColor(if (!isSelected) com.example.stackoverflowuser.R.color.red else com.example.stackoverflowuser.R.color.white))
+        main_tv_bookmark.setTextColor(resources.getColor(if (!isSelected) com.example.stackoverflowuser.R.color.white else com.example.stackoverflowuser.R.color.red))
     }
 
     override fun onClick(v: View) {
@@ -123,13 +124,23 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 selectAll(true)
                 adapter!!.back2AllUsers()
 
+
             } else if (v.id == main_tv_bookmark.id) {
                 selectAll(false)
                 adapter!!.showBookmarks()
+
             }
         }
 
     }
+
+    private fun sendTracker(screenName: String) {
+        val application = application as MyApplication
+        val mTracker = application.getDefaultTracker()
+        mTracker.setScreenName(screenName)
+        mTracker.send(HitBuilders.ScreenViewBuilder().build())
+    }
+
 
     private val onScrollListener =
         object : androidx.recyclerview.widget.RecyclerView.OnScrollListener() {
