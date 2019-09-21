@@ -12,15 +12,15 @@ class StackOverflowServiceBuilder {
 
     companion object {
         fun getUsers(page: Int, pageSize: Int, site: String) = suspend {
-            val restStackOverflowUserService = NetworkProvider.instance
-                .provideApi(Urls.BASE_URL, RestStackOverflowService::class.java)
+            val restStackOverflowUserService: RestStackOverflowService = NetworkProvider.instance
+                .provideApi(Urls.BASE_URL)
             restStackOverflowUserService.getUsers(page, pageSize, site)
         }
 
 
         fun getUserReputations(userId: String, page: Int, pageSize: Int, site: String) = suspend {
-            val restStackOverflowUserService = NetworkProvider.instance
-                .provideApi(Urls.BASE_URL, RestStackOverflowService::class.java)
+            val restStackOverflowUserService: RestStackOverflowService = NetworkProvider.instance
+                .provideApi(Urls.BASE_URL)
             restStackOverflowUserService.getUserReputations(userId, page, pageSize, site)
         }
     }
