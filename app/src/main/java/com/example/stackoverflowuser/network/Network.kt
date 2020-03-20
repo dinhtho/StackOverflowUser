@@ -15,18 +15,16 @@ object Network {
         doOnSubscribe: (() -> Unit)? = null,
         doOnTerminate: (() -> Unit)? = null
     ) {
-        scope.launch {
-            doOnSubscribe?.invoke()
-            try {
-                success?.invoke(call.invoke())
-            } catch (t: Throwable) {
-                error?.invoke(t)
-            } finally {
-                doOnTerminate?.invoke()
-            }
+        doOnSubscribe?.invoke()
+        val IOContext = Dispatchers.IO + CoroutineExceptionHandler { _, throwable ->
+            error?.invoke(throwable)
+            doOnTerminate?.invoke()
+        }
+        scope.launch(IOContext) {
+            success?.invoke(call.invoke())
+            doOnTerminate?.invoke()
         }
     }
-
 
     fun <T> multipleRequest(
         scope: CoroutineScope = CoroutineScope(Dispatchers.Main),
@@ -36,26 +34,15 @@ object Network {
         doOnSubscribe: (() -> Unit)? = null,
         doOnTerminate: (() -> Unit)? = null
     ) {
-        scope.launch {
-            doOnSubscribe?.invoke()
-            try {
-                val requests: MutableList<Deferred<T>> = mutableListOf()
-                val results: MutableList<T> = mutableListOf()
-                calls.forEach {
-                    val data = async {
-                        it.invoke()
-                    }
-                    requests.add(data)
-                }
-                requests.forEach {
-                    results.add(it.await())
-                }
-                success?.invoke(results)
-            } catch (t: Throwable) {
-                error?.invoke(t)
-            } finally {
-                doOnTerminate?.invoke()
-            }
+        doOnSubscribe?.invoke()
+        val IOContext = Dispatchers.IO + CoroutineExceptionHandler { _, throwable ->
+            error?.invoke(throwable)
+            doOnTerminate?.invoke()
+        }
+        scope.launch(IOContext) {
+            val results = calls.map { async(IOContext) { it.invoke() } }.map { it.await() }.toList()
+            success?.invoke(results)
+            doOnTerminate?.invoke()
         }
     }
 }

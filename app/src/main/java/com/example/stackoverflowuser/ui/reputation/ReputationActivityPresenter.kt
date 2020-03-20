@@ -1,20 +1,13 @@
 package com.example.stackoverflowuser.ui.reputation
 
-import com.example.stackoverflowuser.base.BasePresenter
 import com.example.stackoverflowuser.constants.Constants
 import com.example.stackoverflowuser.model.Reputation
-import com.example.stackoverflowuser.model.ReputationsResponse
-import com.example.stackoverflowuser.model.User
 import com.example.stackoverflowuser.network.Network
 import com.example.stackoverflowuser.services.stackoverflow_user.StackOverflowServiceBuilder
-import io.realm.Realm
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 
-class ReputationActivityPresenter : BasePresenter<ReputationActivityView> {
+class ReputationActivityPresenter :
+    BasePresenter<ReputationActivityView> {
 
     var mView: ReputationActivityView? = null
 

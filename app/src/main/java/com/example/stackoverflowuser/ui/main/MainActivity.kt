@@ -46,6 +46,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
         sendTracker(this.javaClass.name)
 
+//        viewModel.useMultipleCalls()
+
     }
 
     private fun setupRecycleView() {

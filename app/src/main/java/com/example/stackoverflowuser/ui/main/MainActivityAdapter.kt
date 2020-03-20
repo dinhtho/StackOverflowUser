@@ -4,18 +4,16 @@ import android.content.res.ColorStateList
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.widget.ImageViewCompat
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.ScaleAnimation
 import android.widget.ImageView
-import android.widget.RelativeLayout
 import android.widget.TextView
 import com.example.stackoverflowuser.R
 import com.example.stackoverflowuser.constants.AppUntil
-import com.example.stackoverflowuser.custom.CircleTransform
+import com.example.stackoverflowuser.widget.CircleTransform
 import com.example.stackoverflowuser.model.User
 import com.squareup.picasso.Picasso
 

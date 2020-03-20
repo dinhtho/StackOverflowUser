@@ -1,5 +1,7 @@
 package com.example.stackoverflowuser.constants
 
+import android.content.Context
+import android.widget.Toast
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -46,4 +48,8 @@ class AppUntil {
         }
 
     }
+}
+
+fun Context.toast(message: String) {
+    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
 }

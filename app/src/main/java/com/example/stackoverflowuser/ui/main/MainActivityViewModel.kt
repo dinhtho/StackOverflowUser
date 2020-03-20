@@ -43,16 +43,18 @@ class MainActivityViewModel : ViewModel() {
                             }
                         }
                     }
-                    users.value = usersResponse.items
+                    users.postValue(usersResponse.items)
                 }
             },
-            doOnTerminate = { loading.value = false },
-            doOnSubscribe = { loading.value = true },
-            error = { throwable -> error.value = throwable }
+            doOnTerminate = { loading.postValue(false) },
+            doOnSubscribe = { loading.postValue(true) },
+            error = { throwable -> error.postValue(throwable) }
         )
+    }
 
+    fun useMultipleCalls() {
         val x = StackOverflowServiceBuilder
-            .getUsers(page, Constants.PAGE_SIZE, Constants.SITE)
+            .getUsers(1, Constants.PAGE_SIZE, Constants.SITE)
 
         Network.multipleRequest(
             scope = viewModelScope,
@@ -60,20 +62,13 @@ class MainActivityViewModel : ViewModel() {
             success = { usersResponses ->
                 Log.i(TAG, "getUsers: ${usersResponses?.size}")
             },
-            doOnTerminate = { loading.value = false },
-            doOnSubscribe = { loading.value = true },
-            error = { throwable -> error.value = throwable }
+            doOnTerminate = { loading.postValue(false) },
+            doOnSubscribe = { loading.postValue(true) },
+            error = { throwable -> error.postValue(throwable) }
         )
 
     }
 
-    fun test0() = suspend {
-        1
-    }
-
-    fun test1() = suspend {
-        "abc"
-    }
 
     private val TAG = "MainActivityViewModel"
 

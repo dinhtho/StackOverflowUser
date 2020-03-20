@@ -1,4 +1,4 @@
-package com.example.stackoverflowuser.custom
+package com.example.stackoverflowuser.widget
 
 import android.graphics.*
 import com.squareup.picasso.Transformation
