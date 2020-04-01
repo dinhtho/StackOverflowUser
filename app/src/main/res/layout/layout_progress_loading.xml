@@ -8,7 +8,7 @@
               android:orientation="vertical"
               tools:ignore="MissingPrefix">
 
-    <kr.co.changbogo.widgets.RotateLoading
+    <com.example.stackoverflowuser.widget.RotateLoading
             android:id="@+id/layout_loading_rotate"
             android:layout_width="30dp"
             android:layout_height="30dp"

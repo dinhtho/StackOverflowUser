@@ -1,4 +1,4 @@
-package com.example.stackoverflowuser.services.stackoverflow_user
+package com.example.stackoverflowuser.api
 
 import com.example.stackoverflowuser.model.ReputationsResponse
 import com.example.stackoverflowuser.model.UsersResponse
@@ -10,7 +10,7 @@ import retrofit2.http.Query
 /**
  * Created by tho nguyen on 2019-05-11.
  */
-interface RestStackOverflowService {
+interface StackOverflowAPI {
     @GET("users")
     suspend fun getUsers(
         @Query("page") page: Int,

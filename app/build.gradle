@@ -26,6 +26,10 @@ android {
         }
     }
 
+    androidExtensions {
+        experimental = true
+    }
+
     packagingOptions {
         pickFirst("META-INF/atomicfu.kotlin_module")
     }
@@ -59,6 +63,8 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-runtime:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
 
-    compile 'com.google.android.gms:play-services-analytics:10.2.4'
+    // glide
+    implementation 'com.github.bumptech.glide:glide:4.10.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.10.0'
 
 }
