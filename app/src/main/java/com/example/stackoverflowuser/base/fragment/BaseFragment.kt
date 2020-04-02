@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.example.stackoverflowuser.R
@@ -92,6 +93,43 @@ abstract class BaseFragment<T : BaseViewModel> : Fragment() {
     fun hideProgressLoading() {
         if (progressDialogLoading != null && progressDialogLoading!!.isShowing)
             progressDialogLoading!!.dismiss()
+    }
+
+    fun addFragment(
+        fragment: Fragment,
+        id: Int,
+        backStack: Boolean = true
+    ) {
+        val transaction = fragmentManager?.beginTransaction()
+        if (transaction != null) {
+            transaction.setCustomAnimations(
+                R.anim.enter_from_right, R.anim.exit_to_left,
+                R.anim.enter_from_left, R.anim.exit_to_right
+            )
+            val currentFragment = fragmentManager!!.fragments.lastOrNull()
+            currentFragment?.let {
+                transaction.hide(it)
+            }
+
+            if (backStack) {
+                transaction.addToBackStack(fragment.javaClass.simpleName)
+            }
+            transaction.add(id, fragment, fragment.javaClass.simpleName).commit()
+        }
+    }
+
+    fun replaceFragment(
+        fragment: Fragment,
+        id: Int,
+        backStack: Boolean = false
+    ) {
+        val transaction = fragmentManager?.beginTransaction()
+        if (transaction != null) {
+            if (backStack) {
+                transaction.addToBackStack(fragment.javaClass.simpleName)
+            }
+            transaction.replace(id, fragment, fragment.javaClass.simpleName).commit()
+        }
     }
 }
 
