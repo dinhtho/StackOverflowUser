@@ -9,6 +9,7 @@ import android.view.Window
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import com.example.stackoverflowuser.R
 
@@ -42,9 +43,9 @@ abstract class BaseFragment<T : BaseViewModel> : Fragment() {
         super.onCreate(savedInstanceState)
         val shareViewMode = ClassUtils.getAnnotation(this, ShareViewModel::class.java)
         if (shareViewMode != null)
-            viewModel = ViewModelProviders.of(activity!!).get(classViewModel)
+            viewModel = ViewModelProvider(activity!!).get(classViewModel)
         else {
-            viewModel = ViewModelProviders.of(this).get(classViewModel)
+            viewModel = ViewModelProvider(this).get(classViewModel)
             viewModel.error().observe(this, onError)
             viewModel.loading().observe(this, onLoading)
         }
@@ -100,22 +101,20 @@ abstract class BaseFragment<T : BaseViewModel> : Fragment() {
         id: Int,
         backStack: Boolean = true
     ) {
-        val transaction = fragmentManager?.beginTransaction()
-        if (transaction != null) {
-            transaction.setCustomAnimations(
-                R.anim.enter_from_right, R.anim.exit_to_left,
-                R.anim.enter_from_left, R.anim.exit_to_right
-            )
-            val currentFragment = fragmentManager!!.fragments.lastOrNull()
-            currentFragment?.let {
-                transaction.hide(it)
-            }
-
-            if (backStack) {
-                transaction.addToBackStack(fragment.javaClass.simpleName)
-            }
-            transaction.add(id, fragment, fragment.javaClass.simpleName).commit()
+        val transaction = parentFragmentManager.beginTransaction()
+        transaction.setCustomAnimations(
+            R.anim.enter_from_right, R.anim.exit_to_left,
+            R.anim.enter_from_left, R.anim.exit_to_right
+        )
+        val currentFragment = parentFragmentManager.fragments.lastOrNull()
+        currentFragment?.let {
+            transaction.hide(it)
         }
+
+        if (backStack) {
+            transaction.addToBackStack(fragment.javaClass.simpleName)
+        }
+        transaction.add(id, fragment, fragment.javaClass.simpleName).commit()
     }
 
     fun replaceFragment(
@@ -123,13 +122,11 @@ abstract class BaseFragment<T : BaseViewModel> : Fragment() {
         id: Int,
         backStack: Boolean = false
     ) {
-        val transaction = fragmentManager?.beginTransaction()
-        if (transaction != null) {
-            if (backStack) {
-                transaction.addToBackStack(fragment.javaClass.simpleName)
-            }
-            transaction.replace(id, fragment, fragment.javaClass.simpleName).commit()
+        val transaction = parentFragmentManager.beginTransaction()
+        if (backStack) {
+            transaction.addToBackStack(fragment.javaClass.simpleName)
         }
+        transaction.replace(id, fragment, fragment.javaClass.simpleName).commit()
     }
 }
 
