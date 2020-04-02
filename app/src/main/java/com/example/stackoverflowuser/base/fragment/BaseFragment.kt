@@ -1,4 +1,4 @@
-package com.example.stackoverflowuser.base
+package com.example.stackoverflowuser.base.fragment
 
 import android.app.Dialog
 import android.os.Bundle
@@ -23,7 +23,7 @@ import com.example.stackoverflowuser.widget.RotateLoading
 abstract class BaseFragment<T : BaseViewModel> : Fragment() {
     private lateinit var viewModel: T
     fun getViewModel() = viewModel
-    protected abstract fun getClassViewModel(): Class<T>
+    protected abstract val classViewModel: Class<T>
 
     protected abstract val layoutId: Int
 
@@ -41,9 +41,9 @@ abstract class BaseFragment<T : BaseViewModel> : Fragment() {
         super.onCreate(savedInstanceState)
         val shareViewMode = ClassUtils.getAnnotation(this, ShareViewModel::class.java)
         if (shareViewMode != null)
-            viewModel = ViewModelProviders.of(activity!!).get(getClassViewModel())
+            viewModel = ViewModelProviders.of(activity!!).get(classViewModel)
         else {
-            viewModel = ViewModelProviders.of(this).get(getClassViewModel())
+            viewModel = ViewModelProviders.of(this).get(classViewModel)
             viewModel.error().observe(this, onError)
             viewModel.loading().observe(this, onLoading)
         }

@@ -18,7 +18,7 @@ import com.example.stackoverflowuser.widget.RotateLoading
 abstract class BaseActivity<T : BaseViewModel> : AppCompatActivity() {
     private lateinit var viewModel: T
     fun getViewModel() = viewModel
-    protected abstract fun getClassViewModel(): Class<T>
+    protected abstract val classViewModel: Class<T>
 
     protected abstract val layoutId: Int
 
@@ -27,7 +27,7 @@ abstract class BaseActivity<T : BaseViewModel> : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(layoutId)
-        viewModel = ViewModelProviders.of(this).get(getClassViewModel())
+        viewModel = ViewModelProviders.of(this).get(classViewModel)
         viewModel.error().observe(this, onError)
         viewModel.loading().observe(this, onLoading)
 

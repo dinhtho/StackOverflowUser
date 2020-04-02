@@ -10,10 +10,9 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : BaseActivity<MainActivityViewModel>() {
+    override val classViewModel: Class<MainActivityViewModel>
+        get() = MainActivityViewModel::class.java
 
-    override fun getClassViewModel(): Class<MainActivityViewModel> {
-        return MainActivityViewModel::class.java
-    }
 
     override val layoutId: Int = R.layout.activity_main
 
