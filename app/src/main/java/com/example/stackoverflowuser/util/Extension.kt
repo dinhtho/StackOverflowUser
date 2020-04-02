@@ -40,6 +40,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.stackoverflowuser.R
+import com.gun0912.tedpermission.PermissionListener
+import com.gun0912.tedpermission.TedPermission
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -71,7 +73,6 @@ fun ImageView.load(data: Any, @DrawableRes placeholderId: Int? = null) {
         glide = glide.placeholder(placeholderId)
     }
     glide.into(this)
-//    Picasso.get().load(url).fit().centerCrop().into(this)
 }
 
 fun ImageView.setTint(@ColorRes color: Int) {
@@ -189,30 +190,30 @@ fun TextView.addOnChangeTextDebounce(
     })
 }
 
-//fun Context.checkPermission(vararg permissions: String, onGranted: () -> Unit) {
-//    val neededPermissionsCheck = permissions.filter {
-//        ContextCompat.checkSelfPermission(this, it) == PackageManager.PERMISSION_DENIED
-//    }.toTypedArray()
-//
-//    if (neededPermissionsCheck.isNotEmpty()) {
-//        val listener = object : PermissionListener {
-//            override fun onPermissionGranted() {
-//                onGranted.invoke()
-//            }
-//
-//            override fun onPermissionDenied(deniedPermissions: List<String>) {
-//
-//            }
-//        }
-//
-//        TedPermission.with(this)
-//            .setPermissionListener(listener)
-//            .setPermissions(*neededPermissionsCheck)
-//            .check()
-//    } else {
-//        onGranted.invoke()
-//    }
-//}
+fun Context.checkPermission(vararg permissions: String, onGranted: () -> Unit) {
+    val neededPermissionsCheck = permissions.filter {
+        ContextCompat.checkSelfPermission(this, it) == PackageManager.PERMISSION_DENIED
+    }.toTypedArray()
+
+    if (neededPermissionsCheck.isNotEmpty()) {
+        val listener = object : PermissionListener {
+            override fun onPermissionGranted() {
+                onGranted.invoke()
+            }
+
+            override fun onPermissionDenied(deniedPermissions: List<String>) {
+
+            }
+        }
+
+        TedPermission.with(this)
+            .setPermissionListener(listener)
+            .setPermissions(*neededPermissionsCheck)
+            .check()
+    } else {
+        onGranted.invoke()
+    }
+}
 
 fun RecyclerView.setLoadMore(loadMore: () -> Unit) {
     addOnScrollListener(object : RecyclerView.OnScrollListener() {
